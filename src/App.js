@@ -1,56 +1,65 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useState } from "react";
+import React from "react";
+import { selectedCount } from "./features/counterSlicer";
+import { increment, decrement } from "./features/counterSlicer";
+import { selectedTodos } from "./features/todoSlicer";
+import { addTodo } from "./features/todoSlicer";
+import "./App.css";
+
+const todoTemplate = {
+  item: "",
+  id: null,
+};
 
 function App() {
+  const [todo, setTodo] = useState(todoTemplate);
+  const value = useSelector(selectedCount);
+  const todoList = useSelector(selectedTodos);
+  const dispatch = useDispatch();
+
+  const handleIncrement = () => {
+    dispatch(increment(10));
+  };
+  const handleDecriment = () => {
+    dispatch(decrement());
+  };
+
+  const handleAddTodo = () => {
+    dispatch(addTodo(todo));
+    setTodo(todoTemplate);
+    console.log(todoList);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+    <div className="container">
+      <div>
+        <div className="counterWrapper">
+          <p>Count is {value}</p>
+          <button onClick={handleIncrement}>+</button>
+          <button onClick={handleDecriment}>-</button>
+        </div>
+        <div className="todoWrapper">
+          <h2>ToDo App</h2>
+          <input
+            value={todo.item}
+            type="text"
+            onChange={(e) =>
+              setTodo({
+                item: e.target.value,
+                id: Date.now(),
+              })
+            }
+          />
+          <button onClick={handleAddTodo}>Add</button>
+          <div>
+            {todoList.map(({ item, id }) => {
+              return <p key={id}>{item}</p>;
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
